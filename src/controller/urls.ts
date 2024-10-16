@@ -1,30 +1,28 @@
 import { NextFunction, Request, Response } from "express"
 
-import users from "../models/models"
+// import users from "../models/models"
+import prisma from "./../prisma/index.ts"
 
-export const signup = async (req: Request, res: Response, next: NextFunction) => {
+export const profile = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log("working before getting data of request ")
-        const { name, email, password } = req.body
-        //check
-        console.log("name : ", name)
-        console.log("email : ", email)
-        console.log("pass : ", password)
-        console.log("working after getting data of request ")
-        const newUser = new users({
-            name: name,
-            email: email,
-            password: password
+        const { fullName,mobileNumber, email, dob1,gender } = req.body
+        const dob = new Date(dob1)
+        const user = await prisma.profile.create({
+            data: {fullName,mobileNumber,dob,gender,email}
         })
-        //send user a token
-        console.log("users : ", newUser)
-        await newUser.save()
-        console.log("saved data successfully")
-        res.json({
-            returned: "Successfully"
+        console.log("Profile created successfully")
+    } catch (err) {throw new Error("Error accured while saving data for Profile!")}
+}
+export const address = async(req: Request, res: Response, next: NextFunction)=>{
+    try{
+        const id = req.query.id
+        const { fullName, mobileNumber, houseNo, sector,landmark ,pincode ,city ,state ,addressType,userId } = req.body
+        const data = await prisma.address.create({
+            data: {fullName, mobileNumber, houseNo, sector,landmark ,pincode ,city ,state ,addressType,userId}
+            user: {
+                connect: { id: id }
+            }
         })
-
-    } catch (err) {
-        throw new Error("error is mine")
-    }
+        console.log("Address added successfully")
+    }catch(err) {throw new Error("Error accured while saving data for Address!")}
 }

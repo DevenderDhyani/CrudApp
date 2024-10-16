@@ -1,9 +1,11 @@
 import { Router } from "express";
-import { signup } from "../controller/urls";
+import { address, profile } from "../controller/urls";
+import { validateToken } from "../middleware";
 
 const rout = Router();
 
-rout.post("/xyz", signup)
+rout.post("/profile", validateToken, profile)
+rout.post("/address", validateToken, address)
 
 export default rout
 
